@@ -1,6 +1,23 @@
-# Ads.txt & App-ads.txt Async Checker
+<div align="left">
 
-A high-throughput asynchronous Python crawler for validating `ads.txt` and `app-ads.txt` availability across massive domain inventories.
+<pre>
+     _       _      _        _      ___        _                                _      _        _   
+    / \   __| |___ | |___  _| |_   ( _ )      / \   _ __  _ __         __ _  __| |___ | |___  _| |_ 
+   / _ \ / _` / __|| __\ \/ / __|  / _ \/\   / _ \ | '_ \| '_ \ _____ / _` |/ _` / __|| __\ \/ / __|
+  / ___ \ (_| \__ \| |_ >  <| |_  | (_>  <  / ___ \| |_) | |_) |_____| (_| | (_| \__ \| |_ >  <| |_ 
+ /_/   \_\__,_|___(_)__/_/\_\\__|  \___/\/ /_/   \_\ .__/| .__/       \__,_|\__,_|___(_)__/_/\_\\__|
+                                                   |_|   |_|                                        
+     _                            ____ _               _             
+    / \   ___ _   _ _ __   ___   / ___| |__   ___  ___| | _____ _ __ 
+   / _ \ / __| | | | '_ \ / __| | |   | '_ \ / _ \/ __| |/ / _ \ '__|
+  / ___ \\__ \ |_| | | | | (__  | |___| | | |  __/ (__|   <  __/ |   
+ /_/   \_\___/\__, |_| |_|\___|  \____|_| |_|\___|\___|_|\_\___|_|   
+              |___/                                                  
+</pre>
+
+</div>
+
+**Ads.txt & App-ads.txt Async Checker:** A high-throughput asynchronous Python crawler for validating `ads.txt` and `app-ads.txt` availability across massive domain inventories.
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![AsyncIO](https://img.shields.io/badge/AsyncIO-Enabled-4B8BBE?style=for-the-badge)](https://docs.python.org/3/library/asyncio.html)
