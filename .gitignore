@@ -1,0 +1,61 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.whl
+pip-wheel-metadata/
+
+# Dependency/vendor directories
+vendor/
+
+# Runtime outputs and crawler result files
+has_ads.txt
+has_app_ads.txt
+domains*.txt
+
+# Logs and local databases
+*.log
+*.sqlite3
+*.db
+
+# Environment variables and secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+secrets.yml
+secrets.yaml
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.iml
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
