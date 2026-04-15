@@ -16,8 +16,8 @@ warnings.filterwarnings("ignore")
 # Settings
 OUTPUT_ADS = 'has_ads.txt'
 OUTPUT_APP_ADS = 'has_app_ads.txt'
-CONCURRENCY_LIMIT = 50  # Number of concurrent checks
-TIMEOUT_SECONDS = 5    # Wait time, no retries will be made if it fails
+CONCURRENCY_LIMIT = 30  # Number of concurrent checks for network stability
+TIMEOUT_SECONDS = 15    # Timeout for each request to allow slower servers to respond
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
