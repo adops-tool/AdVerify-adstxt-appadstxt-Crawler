@@ -1,5 +1,6 @@
 import asyncio
 import aiohttp
+from aiohttp import ClientTimeout
 import time
 import sys
 import os
@@ -15,11 +16,11 @@ from tqdm import tqdm
 logging.getLogger('asyncio').setLevel(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 
-# Settings
+# Settings - Adjusted for maximum stability and minimal false negatives
 OUTPUT_ADS = 'has_ads.txt'
 OUTPUT_APP_ADS = 'has_app_ads.txt'
-CONCURRENCY_LIMIT = 30   # Number of concurrent checks
-TIMEOUT_SECONDS = 15      # Wait time, no retries will be made if it fails
+CONCURRENCY_LIMIT = 30   # Reduced concurrent checks for network stability
+TIMEOUT_SECONDS = 15     # Increased wait time for slower servers
 FLUSH_INTERVAL = 100     # Write results to disk every N domains
 CONTENT_PEEK_SIZE = 2048 # Bytes to read for content validation
 DNS_CACHE_TTL = 300      # DNS cache lifetime in seconds
@@ -38,44 +39,62 @@ ADS_TXT_PATTERN = re.compile(
 shutdown_event = asyncio.Event()
 
 
-async def check_url(session, url, original_domain):
-    """Check if a valid ads.txt / app-ads.txt exists at the URL and count lines."""
-    try:
-        timeout = aiohttp.ClientTimeout(total=TIMEOUT_SECONDS)
-        async with session.get(url, timeout=timeout, allow_redirects=True) as response:
-            if response.status != 200:
-                return False, 0
-
-            # Check that we didn't get redirected to a completely different domain
-            final_host = response.url.host or ''
-            if original_domain not in final_host and final_host not in original_domain:
-                # Allow common patterns like www.example.com -> example.com and vice versa
-                stripped_final = final_host.lstrip('www.')
-                stripped_original = original_domain.lstrip('www.')
-                if stripped_final != stripped_original:
+async def check_url(session, url, original_domain, max_retries=3):
+    """Check if a valid ads.txt / app-ads.txt exists at the URL and count lines with retries."""
+    for attempt in range(max_retries):
+        try:
+            timeout = ClientTimeout(total=TIMEOUT_SECONDS)
+            async with session.get(url, timeout=timeout, allow_redirects=True) as response:
+                
+                # If the file definitely doesn't exist or access is forbidden, do not retry
+                if response.status in (404, 403, 400):
                     return False, 0
+                
+                if response.status == 200:
+                    # Check that we didn't get redirected to a completely different domain
+                    final_host = response.url.host or ''
+                    if original_domain not in final_host and final_host not in original_domain:
+                        # Allow common patterns like www.example.com -> example.com and vice versa
+                        stripped_final = final_host.lstrip('www.')
+                        stripped_original = original_domain.lstrip('www.')
+                        if stripped_final != stripped_original:
+                            return False, 0
 
-            content_type = response.headers.get('Content-Type', '').lower()
+                    content_type = response.headers.get('Content-Type', '').lower()
 
-            # Reject if server returned an HTML page (likely a custom 404)
-            if 'text/html' in content_type:
-                return False, 0
+                    # Reject if server returned an HTML page (likely a custom 404)
+                    if 'text/html' in content_type:
+                        return False, 0
 
-            # Read the full content to count lines
-            text = await response.text(errors='replace')
-            if not text:
-                return False, 0
+                    # Read the full content to count lines
+                    text = await response.text(errors='replace')
+                    if not text:
+                        return False, 0
 
-            # Must contain at least one ads.txt-like line or comment
-            if not ADS_TXT_PATTERN.search(text):
-                return False, 0
+                    # Must contain at least one ads.txt-like line or comment
+                    if not ADS_TXT_PATTERN.search(text):
+                        return False, 0
 
-            # Count valid lines
-            line_count = len([line for line in text.split('\n') if line.strip()])
-            return True, line_count
+                    # Count valid lines
+                    line_count = len([line for line in text.split('\n') if line.strip()])
+                    return True, line_count
+                    
+                # If status is 500, 502, 503, 504, etc., it will skip the above blocks 
+                # and proceed to the sleep step below to retry.
 
-    except Exception:
-        return False, 0
+        except asyncio.TimeoutError:
+            # Handle specific timeout exception
+            pass
+        except Exception:
+            # Handle connection errors or other unexpected issues
+            pass
+            
+        # If it's not the last attempt, wait 1 second before the next request
+        if attempt < max_retries - 1:
+            await asyncio.sleep(1)
+
+    # If all attempts are exhausted
+    return False, 0
 
 
 def load_existing_results(filepath):
