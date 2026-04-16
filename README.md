@@ -19,7 +19,7 @@
 
 **Ads.txt & App-ads.txt Async Checker:** A high-throughput asynchronous Python crawler for validating `ads.txt` and `app-ads.txt` availability across massive domain inventories.
 
-https://gist.github.com/OstinUA/7d82c337e3402ec9771d3ed23fab64cb
+[![Gist](https://img.shields.io/badge/gist.github-version_of_this_repository-DCDCDC?style=for-the-badge&logo=github)](https://gist.github.com/OstinUA/7d82c337e3402ec9771d3ed23fab64cb)
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![AsyncIO](https://img.shields.io/badge/AsyncIO-Enabled-4B8BBE?style=for-the-badge)](https://docs.python.org/3/library/asyncio.html)
